@@ -1,0 +1,522 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="h-screen bg-black">
+    <div class="container mx-auto h-full flex flex-col md:flex-row justify-center items-center">
+
+      <!-- Content Section -->
+      <div class="w-full md:w-2/4 space-y-5 mt-10 text-center md:text-left">
+        <h1 class="text-4xl lg:text-6xl font-bold leading-tight text-white">
+          Kinshasa Ba Vraie Car Ezo Zela Kaka Yo
+        </h1>
+        <p class="text-lg lg:text-2xl font-medium text-white">
+          Plus de 1000 voitures disponibles ici
+      </p>
+      <p class="text-sm lg:text-base text-white">
+          Plus de 1000 voitures sont postées et vendues à une vitesse incroyable sur la plateforme Kin Car. Ce n’est pas un groupe WhatsApp, mais une plateforme web accessible partout dans le monde. Achetez ou vendez plus rapidement !
+      </p>
+      
+
+      <div class="flex gap-8 justify-center md:justify-start">
+        <!-- Bouton Voitures des particuliers -->
+        <a href="{% url 'vehicule_list' %}">
+            <button class="bg-blue-600 text-white py-2 px-6 rounded-md hover:scale-95 transition duration-150 ease-linear">
+                 Voitures à voir
+            </button>
+        </a>
+    
+        <!-- Bouton Voitures des compagnies -->
+        <a href="{% url 'vehiculecompagnielist' %}">
+            <button class="border-2 border-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-200 ease-linear">
+                 Compagnies voitures
+            </button>
+        </a>
+    </div>
+      </div>
+
+      <!-- Image Section -->
+      <div class="w-full md:w-2/4 mt-4">
+        <img src="{% static 'img/hero.jpg' %}" alt="car image" class="w-full h-full object-cover rounded-lg shadow-lg"/>
+      </div>
+
+    </div>
+</section>
+{% comment %} featured {% endcomment %}
+<!-- Section Featured Vehicules -->
+<section class="mt-16 px-4">
+  <!-- Titre de la section -->
+  <h2 class="text-4xl font-bold text-center mb-4">Véhicules <span class="text-primary">des Compagnies</span></h2>
+  <p class="text-center mb-8">Découvrez une sélection de véhicules exceptionnels.</p>
+
+  <!-- Conteneur principal de la glisse horizontale -->
+  <div class="relative flex justify-center">
+      {% comment %} <button id="prevSlide" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          &lt;
+      </button> {% endcomment %}
+
+      <div class="flex space-x-6 overflow-x-auto scroll-smooth snap-x snap-mandatory">
+          {% for vehicule in vehiculecompagnie %}
+              <!-- Carte du véhicule -->
+              <div class="vehicle-card flex-shrink-0 snap-start w-64 p-4 border-2 border-gray-200 rounded-xl bg-white">
+                  <!-- Lien autour de l'image pour rediriger vers les détails -->
+                  <a href="{% url 'vehiculecompagnie_detail' id=vehicule.id %}">
+                      <img src="{{ vehicule.image_profile.url }}" alt="{{ vehicule.nom }}" class="w-full h-48 object-cover rounded-t-lg cursor-pointer">
+                  </a>
+
+                  <!-- Informations du véhicule -->
+                  <div class="mt-4 text-center">
+                      <h4 class="text-lg font-semibold text-gray-800">{{ vehicule.nom }}</h4>
+                      <p class="text-gray-500">{{ vehicule.prix }} {{ vehicule.devise }}</p>
+                  </div>
+
+                  <!-- Ajout de la compagnie et du motif -->
+                  <div class="flex justify-between items-center mt-4">
+                      <!-- Nom de la compagnie -->
+                      <p class="text-gray-600">
+                          <strong>Compagnie Propriétaire : </strong>{{ vehicule.compagnie.nom }}
+                      </p>
+                      <!-- Motif de la vente/location -->
+                      <p class="text-gray-600">
+                          <strong>Motif : </strong>{{ vehicule.motif }}
+                      </p>
+                  </div>
+
+                  <!-- Bouton Voir Détails -->
+                  <div class="flex justify-center mt-4">
+                      <a href="{% url 'vehiculecompagnie_detail' id=vehicule.id %}" class="bg-primary text-white py-2 px-6 rounded-lg hover:bg-primary-dark transition">
+                          Voir Détails
+                      </a>
+                  </div>
+
+                  <!-- Bouton pour le profil de la compagnie -->
+                  
+              </div>
+          {% endfor %}
+      </div>
+
+      {% comment %} <button id="nextSlide" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          &gt;
+      </button> {% endcomment %}
+  </div>
+
+  <!-- Bouton Voir Plus -->
+  <div class="text-center mt-6">
+    <a href="{% url 'vehiculecompagnielist' %}" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition">
+        Voir Plus
+    </a>
+</div>
+
+</section>
+
+<!-- Script pour la gestion du glisseur manuel -->
+{% comment %} <script>
+  const prevButton = document.getElementById('prevSlide');
+  const nextButton = document.getElementById('nextSlide');
+  const slideContainer = document.querySelector('.flex');
+
+  prevButton.addEventListener('click', () => {
+      slideContainer.scrollBy({
+          left: -200, // Déplace de 200px vers la gauche
+          behavior: 'smooth',
+      });
+  });
+
+  nextButton.addEventListener('click', () => {
+      slideContainer.scrollBy({
+          left: 200, // Déplace de 200px vers la droite
+          behavior: 'smooth',
+      });
+  });
+</script> {% endcomment %}
+
+{% comment %} vehicule particulier {% endcomment %}
+<section class="mt-16 px-4">
+  <!-- Titre de la section -->
+  <h2 class="text-4xl font-bold text-center mb-4">Véhicules <span class="text-primary">des particuliers </span></h2>
+  <p class="text-center mb-8">Découvrez une sélection de véhicules exceptionnels.</p>
+
+  <!-- Conteneur principal de la glisse horizontale -->
+  <div class="relative flex justify-center">
+      {% comment %} <button id="prevSlide" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          &lt;
+      </button> {% endcomment %}
+
+      <div class="flex space-x-6 overflow-x-auto scroll-smooth snap-x snap-mandatory">
+          {% for vehicule in vehicules %}
+              <!-- Carte du véhicule -->
+              <div class="vehicle-card flex-shrink-0 snap-start w-64 p-4 border-2 border-gray-200 rounded-xl bg-white">
+                  <!-- Lien autour de l'image pour rediriger vers les détails -->
+                  <a href="{% url 'vehicule_detail' vehicule.id %}">
+                      <img src="{{ vehicule.image_profile.url }}" alt="{{ vehicule.nom }}" class="w-full h-48 object-cover rounded-t-lg cursor-pointer">
+                  </a>
+
+                  <!-- Informations du véhicule -->
+                  <div class="mt-4 text-center">
+                      <h4 class="text-lg font-semibold text-gray-800">{{ vehicule.nom }}</h4>
+                      <p class="text-gray-500">{{ vehicule.prix }} {{ vehicule.devise }}</p>
+                      <p class="text-gray-500">{{ vehicule.motif }}</p> <!-- Ajout du motif (LOCATION/VENTE) -->
+                  </div>
+
+                  <!-- Ajout de la compagnie et du motif -->
+                  <div class="flex justify-between items-center mt-4">
+                      <!-- Nom de la compagnie -->
+                      <p class="text-gray-600">
+                          <strong> Propriétaire : </strong>{{ vehicule.user.username }}
+                      </p>
+                  </div>
+
+                  <!-- Bouton Voir Détails -->
+                  <div class="flex justify-center mt-4">
+                      <a href="{% url 'vehicule_detail' vehicule.id %}" class="bg-primary text-white py-2 px-6 rounded-lg hover:bg-primary-dark transition">
+                          Voir Détails
+                      </a>
+                  </div>
+
+                 
+              </div>
+          {% endfor %}
+      </div>
+
+      {% comment %} <button id="nextSlide" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          &gt;
+      </button> {% endcomment %}
+  </div>
+
+  <!-- Bouton Voir Plus -->
+  <div class="text-center mt-6">
+    <a href="{% url 'vehicule_list' %}" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition">
+        Voir Plus
+    </a>
+</div>
+
+</section>
+
+<!-- Script pour la gestion du glisseur manuel -->
+<script>
+  const prevButton = document.getElementById('prevSlide');
+  const nextButton = document.getElementById('nextSlide');
+  const slideContainer = document.querySelector('.flex');
+
+  prevButton.addEventListener('click', () => {
+      slideContainer.scrollBy({
+          left: -200, // Déplace de 200px vers la gauche
+          behavior: 'smooth',
+      });
+  });
+
+  nextButton.addEventListener('click', () => {
+      slideContainer.scrollBy({
+          left: 200, // Déplace de 200px vers la droite
+          behavior: 'smooth',
+      });
+  });
+</script>
+{% comment %} compagnie {% endcomment %}
+<section class="mt-16 px-4">
+  <!-- Titre de la section -->
+  <h2 class="text-4xl font-bold text-center mb-4">Les <span class="text-primary">Compagnies</span></h2>
+  <p class="text-center mb-8">Découvrez nos compagnies partenaires pour des véhicules exceptionnels.</p>
+
+  <!-- Conteneur principal de la glisse horizontale -->
+  <div class="relative flex justify-center">
+      {% comment %} <button id="prevSlide" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          &lt;
+      </button> {% endcomment %}
+
+      <div class="flex space-x-6 overflow-x-auto scroll-smooth snap-x snap-mandatory">
+          {% for compagnie in compagnies %}
+              <!-- Carte de la compagnie -->
+              <div class="companie-card flex-shrink-0 snap-start w-64 p-4 border-2 border-gray-200 rounded-xl bg-white">
+                  <!-- Lien autour de l'image pour rediriger vers les détails -->
+                  <a href="{% url 'compagnie_detail' compagnie.slug %}">
+                      <img src="{{ compagnie.thumbnail.url }}" alt="{{ compagnie.nom }}" class="w-full h-48 object-cover rounded-t-lg cursor-pointer">
+                  </a>
+
+                  <!-- Informations de la compagnie -->
+                  <div class="mt-4 text-center">
+                      <h4 class="text-lg font-semibold text-gray-800">{{ compagnie.nom }}</h4>
+                      <p class="text-gray-500">{{ compagnie.pays }}</p>
+                  </div>
+
+                  <!-- Bouton Voir Détails -->
+                  <div class="flex justify-center mt-4">
+                      <a href="{% url 'compagnie_detail' compagnie.slug %}" class="bg-primary text-white py-2 px-6 rounded-lg hover:bg-primary-dark transition">
+                          Voir Détails
+                      </a>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+
+      {% comment %} <button id="nextSlide" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          &gt;
+      </button> {% endcomment %}
+  </div>
+
+  <!-- Bouton Voir Plus -->
+  <div class="text-center mt-6">
+    <a href="{% url 'compagnie_vehiculelist' %}" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition">
+        Voir Plus
+    </a>
+</div>
+
+</section>
+
+<!-- Script pour la gestion du glisseur manuel -->
+<script>
+  const prevButton = document.getElementById('prevSlide');
+  const nextButton = document.getElementById('nextSlide');
+  const slideContainer = document.querySelector('.flex');
+
+  prevButton.addEventListener('click', () => {
+      slideContainer.scrollBy({
+          left: -200, // Déplace de 200px vers la gauche
+          behavior: 'smooth',
+      });
+  });
+
+  nextButton.addEventListener('click', () => {
+      slideContainer.scrollBy({
+          left: 200, // Déplace de 200px vers la droite
+          behavior: 'smooth',
+      });
+  });
+</script>
+
+<section class="flex flex-col justify-center container md:mt-16 py-10">
+
+  <!-- Section Title -->
+  <h1 class="font-bold text-4xl text-center">
+    Pourquoi choisir <span class="text-primary">Kin Car</span> ?
+  </h1>
+
+  <p class="text-center mt-4">
+    Kin Car est la plateforme idéale pour faciliter la promotion et la vente de véhicules à Kinshasa et ses alentours. Contrairement aux groupes WhatsApp, Kin Car est une plateforme web accessible partout dans le monde, permettant aux entreprises et aux particuliers de maximiser la visibilité de leurs véhicules et d’accélérer leur vente.
+  </p>
+
+  <!-- Card Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-5">
+
+    <!-- Card 1 -->
+    <div class="text-center p-8 space-y-4 bg-slate-100 hover:bg-secondary hover:text-white transition duration-200 ease-in-out rounded-md cursor-pointer">
+      <img src="{% static 'img/hero.jpg' %}" alt="Icon" class="w-16 h-16 mx-auto" />
+      <h1 class="text-primary text-3xl font-bold">Plus de Visibilité</h1>
+      <p class="text-sm">
+        Publiez vos véhicules sur une plateforme dédiée et atteignez un public plus large, loin des limitations des groupes privés. Avec Kin Car, vos annonces sont visibles à l'échelle de Kinshasa et ses environs.
+      </p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="text-center p-8 space-y-4 bg-slate-100 hover:bg-secondary hover:text-white transition duration-200 ease-in-out rounded-md cursor-pointer">
+      <img src="{% static 'img/hero.jpg' %}" alt="Icon" class="w-16 h-16 mx-auto" />
+      <h1 class="text-primary text-3xl font-bold">Plus de Ventes</h1>
+      <p class="text-sm">
+        En exposant vos véhicules sur Kin Car, vous augmentez vos chances de vendre rapidement grâce à une plateforme qui met en valeur votre produit. Accédez à une clientèle plus large et plus réactive.
+      </p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="text-center p-8 space-y-4 bg-slate-100 hover:bg-secondary hover:text-white transition duration-200 ease-in-out rounded-md cursor-pointer">
+      <img src="{% static 'img/hero.jpg' %}" alt="Icon" class="w-16 h-16 mx-auto" />
+      <h1 class="text-primary text-3xl font-bold">Une Plateforme Simple</h1>
+      <p class="text-sm">
+        La publication d’annonces est rapide et facile, permettant ainsi aux vendeurs de se concentrer sur ce qui compte : vendre leur véhicule. Kin Car simplifie chaque étape, depuis la mise en ligne de l'annonce jusqu'à la vente.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<section class="container my-10">
+
+  <!-- Title Section -->
+  <div>
+    <h1 class="font-bold text-4xl text-center">
+      Notre <span class="text-primary">Mission</span>
+    </h1>
+  </div>
+
+  <!-- Flex Section for Image and Content -->
+  <div class="flex flex-col justify-center md:flex-row items-center gap-5 mt-8">
+
+    <!-- Image Section -->
+    <div class="w-full md:w-2/4">
+      <img class="rounded-lg w-full" src="{% static 'img/mission.jpg' %}" alt="Mission Image" />
+    </div>
+
+    <!-- Content Section -->
+    <div class="w-full md:w-2/4 space-y-4">
+      <h1 class="font-bold text-primary text-xl lg:text-3xl">
+        Créer une communauté où chaque transaction est simplifiée et rapide.
+      </h1>
+      <h2 class="font-semibold text-lg lg:text-2xl">
+        Permettre aux individus et entreprises d'accéder à des solutions de mobilité durables tout en maximisant l'impact positif sur l'économie locale.
+      </h2>
+      <p class="text-sm lg:text-base">
+        Chez Kin Car, nous croyons que la vente et l'achat de véhicules doivent être rapides, accessibles et sans tracas. Notre mission est de connecter les vendeurs aux acheteurs dans une plateforme de confiance.
+      </p>
+      <p class="text-sm lg:text-base">
+        Kin Car est la solution idéale pour ceux qui cherchent à vendre ou acheter des véhicules à Kinshasa. Nous mettons en avant la transparence, la sécurité et la rapidité des transactions. Rejoignez-nous et faites partie de la communauté Kin Car.
+      </p>
+    </div>
+    
+  </div>
+</section>
+{% comment %} featured {% endcomment %}
+<!-- Section Featured Vehicules -->
+
+
+{% comment %} our different car {% endcomment %}
+<section class="container pt-24">
+
+  <!-- Title Section -->
+  <div>
+    <h1 class="font-bold text-4xl text-center">
+      Vos <span class="text-primary">Voitures</span>
+    </h1>
+  </div>
+
+  <!-- Hero Image Section (Background for the whole section or as image) -->
+  <div class="relative w-full mt-10 mb-12">
+    <img src="{% static 'img/hero.jpg' %}" alt="Hero Image" class="w-full h-96 object-cover rounded-lg shadow-lg" />
+    <div class="absolute inset-0 bg-black opacity-50"></div> <!-- Dark overlay for contrast -->
+    <div class="absolute inset-0 flex justify-center items-center px-6"> <!-- Added padding here -->
+      <h2 class="text-white text-3xl font-bold text-center">
+        Vos voitures ou futures voitures n'attendent que vous pour être mises en visibilité
+      </h2>
+    </div>
+</div>
+
+
+  <!-- Cars Grid Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+    <!-- Looping over carsData -->
+    {% for car in carsData %}
+      <div class="border-2 border-secondary bg-slate-100 text-black rounded-xl mb-2 cursor-pointer">
+        <img src="{% static car.img %}" alt="{{ car.name }}" class="w-full rounded-t-xl">
+        <h1 class="font-bold text-xl pl-5 text-primary">{{ car.name }}</h1>
+        <p class="pl-5 pb-4">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, doloribus?
+        </p>
+        <div class="flex justify-between px-6 pb-2">
+          <h3 class="font-semibold text-xl">${{ car.price }}</h3>
+          <button class="bg-secondary text-white text-base md:text-lg px-2 md:px-3 py-1 rounded-md hover:bg-primary transition duration-200 ease-linear">
+            Book Now
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+</section>
+<!-- Sites Web Section -->
+<section id="website_section" class="py-16 bg-gray-100">
+  <div class="max-w-6xl mx-auto text-center">
+    
+      <h2 class="text-3xl font-semibold mb-8">Répertoire des sites web de tous les domaines</h2>
+
+      <!-- Formulaire de recherche -->
+      <form method="get" action="#website_section" class="mb-8 flex flex-col items-center space-y-4">
+        <!-- Champ de recherche fusionné pour nom et description -->
+        <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Rechercher par nom ou description"
+            class="px-4 py-2 w-full sm:w-96 border border-gray-300 rounded-md">
+        
+        <!-- Bouton de recherche -->
+        <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-md w-full sm:w-auto">
+            Rechercher
+        </button>
+    </form>
+    
+{% if websites %}
+<!-- Liste des WebsiteLinks -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for website in websites %}
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+            <div class="h-48 bg-cover bg-center rounded-lg" style="background-image: url('{{ website.profile_picture.url }}');"></div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ website.name }}</h3>
+            <p class="text-sm text-gray-500">{{ website.description }}</p>
+            <a href="{{ website.website_link }}" class="text-blue-500 hover:underline">Visite le site </a>
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-red-500">Aucun site trouvé correspondant à vos critères.</p>
+{% endif %}
+
+
+        <!-- Pagination -->
+        <div class="mt-8">
+            {% if websites.has_next %}
+                <a href="?page={{ websites.next_page_number }}" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Page suivante</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+<section class="bg-white section-padding relative" style="background-image: url('{% static 'img/hero.jpg' %}'); background-size: cover; background-position: center;">
+  <div class="absolute inset-0 bg-black opacity-30"></div> <!-- Overlay sombre optionnel -->
+  
+  <!-- Ajout de padding en haut et en bas du contenu -->
+  <div class="container mx-auto px-4 py-16 relative z-10">
+      <div class="flex flex-col md:flex-row mb-32">
+          
+          <!-- Section des informations de contact -->
+          <div class="md:w-1/2 mb-8 animate-box" data-animate-effect="fadeInUp">
+              <h5 class="text-xl font-semibold text-white">Information</h5>
+              <p class="mb-8 text-gray-200">Voici nos contacts qui sont 7/7 opérationnels pour répondre à vos besoins.</p>
+
+              <div class="flex items-center mb-4">
+                  <div class="mr-4">
+                      <img src="{% static 'img/icons/c1.svg' %}" alt="" class="w-8 h-8">
+                  </div>
+                  <div>
+                      <div class="font-semibold text-white">Appelez-nous</div>
+                      <div class="text-gray-200"><a href="tel:0972489318" class="text-blue-400 hover:underline">+ 243972489318</a></div>
+                  </div>
+              </div>
+
+              <div class="flex items-center">
+                  <div class="mr-4">
+                      <img src="{% static 'img/icons/c2.svg' %}" alt="" class="w-8 h-8">
+                  </div>
+                  <div>
+                      <div class="font-semibold text-white">Envoyer un email</div>
+                      <div class="text-gray-200"><a href="mailto:ngelekapeniel@gmail.com" class="text-blue-400 hover:underline">ngelekapeniel@gmail.com</a></div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Section du formulaire de contact -->
+          <div class="md:w-1/2 md:ml-8 animate-box" data-animate-effect="fadeInUp">
+              <div class="form-box p-6 border rounded-lg shadow bg-white">
+                  <h5 class="text-xl font-semibold mb-4">Contacter nous</h5>
+                  <form action="https://api.web3forms.com/submit" method="POST">
+                      <input type="hidden" name="access_key" value="98566e49-8c9c-41d3-8472-2549b3cb0e2d">
+                      
+                      <div class="mb-4">
+                          <input name="name" type="text" required placeholder="Votre Nom *" class="w-full p-2 border rounded" />
+                      </div>
+                      <div class="flex mb-4">
+                          <div class="w-1/2 pr-2">
+                              <input name="email" type="email" required placeholder="Votre Email *" class="w-full p-2 border rounded" />
+                          </div>
+                          <div class="w-1/2 pl-2">
+                              <input name="phone" type="text" required placeholder="Votre Numéro *" class="w-full p-2 border rounded" />
+                          </div>
+                      </div>
+                      <div class="mb-4">
+                          <input name="subject" type="text" required placeholder="Entrer le Service recherché" class="w-full p-2 border rounded" />
+                      </div>
+                      <div class="mb-4">
+                          <textarea name="msg" required placeholder="Déterminer votre commande *" class="w-full p-2 border rounded"></textarea>
+                      </div>
+                      <div>
+                          <input name="submit" type="submit" value="Envoyer maintenant" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer" />
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+{% endblock content %}

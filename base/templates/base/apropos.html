@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="flex flex-col justify-center items-center container md:mt-16 py-10 min-h-screen">
+
+    <!-- Section Title -->
+    <h1 class="font-bold text-4xl text-center">
+      Pourquoi choisir <span class="text-primary">Kin Car</span> ?
+    </h1>
+
+    <p class="text-center mt-4 max-w-3xl">
+      Kin Car est la plateforme idéale pour faciliter la promotion et la vente de véhicules à Kinshasa et ses alentours. Contrairement aux groupes WhatsApp, Kin Car est une plateforme web accessible partout dans le monde, permettant aux entreprises et aux particuliers de maximiser la visibilité de leurs véhicules et d’accélérer leur vente.
+    </p>
+
+    <!-- Card Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-5">
+
+      <!-- Card 1 -->
+      <div class="text-center p-8 space-y-4 bg-slate-100 hover:bg-secondary hover:text-white transition duration-200 ease-in-out rounded-md cursor-pointer">
+        <img src="{% static 'img/hero.jpg' %}" alt="Icon" class="w-16 h-16 mx-auto" />
+        <h1 class="text-primary text-3xl font-bold">Plus de Visibilité</h1>
+        <p class="text-sm">
+          Publiez vos véhicules sur une plateforme dédiée et atteignez un public plus large, loin des limitations des groupes privés. Avec Kin Car, vos annonces sont visibles à l'échelle de Kinshasa et ses environs.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="text-center p-8 space-y-4 bg-slate-100 hover:bg-secondary hover:text-white transition duration-200 ease-in-out rounded-md cursor-pointer">
+        <img src="{% static 'img/hero.jpg' %}" alt="Icon" class="w-16 h-16 mx-auto" />
+        <h1 class="text-primary text-3xl font-bold">Plus de Ventes</h1>
+        <p class="text-sm">
+          En exposant vos véhicules sur Kin Car, vous augmentez vos chances de vendre rapidement grâce à une plateforme qui met en valeur votre produit. Accédez à une clientèle plus large et plus réactive.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="text-center p-8 space-y-4 bg-slate-100 hover:bg-secondary hover:text-white transition duration-200 ease-in-out rounded-md cursor-pointer">
+        <img src="{% static 'img/hero.jpg' %}" alt="Icon" class="w-16 h-16 mx-auto" />
+        <h1 class="text-primary text-3xl font-bold">Une Plateforme Simple</h1>
+        <p class="text-sm">
+          La publication d’annonces est rapide et facile, permettant ainsi aux vendeurs de se concentrer sur ce qui compte : vendre leur véhicule. Kin Car simplifie chaque étape, depuis la mise en ligne de l'annonce jusqu'à la vente.
+        </p>
+      </div>
+
+    </div>
+</section>
+
+<section class="container my-10">
+
+    <!-- Title Section -->
+    <div>
+      <h1 class="font-bold text-4xl text-center">
+        Notre <span class="text-primary">Mission</span>
+      </h1>
+    </div>
+
+    <!-- Flex Section for Image and Content -->
+    <div class="flex flex-col justify-center md:flex-row items-center gap-5 mt-8">
+
+      <!-- Image Section -->
+      <div class="w-full md:w-2/4">
+        <img class="rounded-lg w-full" src="{% static 'img/mission.jpg' %}" alt="Mission Image" />
+      </div>
+
+      <!-- Content Section -->
+      <div class="w-full md:w-2/4 space-y-4">
+        <h1 class="font-bold text-primary text-xl lg:text-3xl">
+          Créer une communauté où chaque transaction est simplifiée et rapide.
+        </h1>
+        <h2 class="font-semibold text-lg lg:text-2xl">
+          Permettre aux individus et entreprises d'accéder à des solutions de mobilité durables tout en maximisant l'impact positif sur l'économie locale.
+        </h2>
+        <p class="text-sm lg:text-base">
+          Chez Kin Car, nous croyons que la vente et l'achat de véhicules doivent être rapides, accessibles et sans tracas. Notre mission est de connecter les vendeurs aux acheteurs dans une plateforme de confiance.
+        </p>
+        <p class="text-sm lg:text-base">
+          Kin Car est la solution idéale pour ceux qui cherchent à vendre ou acheter des véhicules à Kinshasa. Nous mettons en avant la transparence, la sécurité et la rapidité des transactions. Rejoignez-nous et faites partie de la communauté Kin Car.
+        </p>
+      </div>
+      
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto mt-8">
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-semibold mb-6">Contacter pour le véhicule "{{ vehicule.nom }}"</h2>
+      
+      <!-- Affichage des messages de succès -->
+      {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="bg-green-100 text-green-700 p-4 rounded-lg mb-2">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      <p class="text-gray-600 mb-6">Si vous êtes intéressé par ce véhicule, veuillez remplir ce formulaire pour nous contacter directement.</p>
+
+      <!-- Formulaire de contact -->
+      <form method="POST">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 gap-6">
+          <!-- Champ Nom -->
+          <div class="mb-4">
+            <label for="id_nom" class="block text-sm font-medium text-gray-700">Nom</label>
+            {{ form.nom }}
+          </div>
+
+          <!-- Champ Email -->
+          <div class="mb-4">
+            <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+            {{ form.email }}
+          </div>
+
+          <!-- Champ Téléphone -->
+          <div class="mb-4">
+            <label for="id_telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+            {{ form.telephone }}
+          </div>
+
+          <!-- Champ Description -->
+          <div class="mb-4">
+            <label for="id_description" class="block text-sm font-medium text-gray-700">Message</label>
+            {{ form.description }}
+          </div>
+
+          <!-- Champ 'Contacté' -->
+          <div class="mb-4">
+            <label for="id_contacté" class="block text-sm font-medium text-gray-700">Contacté</label>
+            {{ form.contacté }}
+          </div>
+        </div>
+      
+        <!-- Bouton de soumission -->
+        <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-700 mt-4">
+          Envoyer la demande de contact
+        </button>
+      </form>      
+    </div>
+  </div>
+{% endblock %}

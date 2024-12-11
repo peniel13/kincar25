@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto mt-8">
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="bg-green-100 text-green-700 p-4 rounded-lg mb-2">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-semibold mb-6">{{ vehicule.nom }} - {{ vehicule.prix }} {{ vehicule.devise }}  / {{ vehicule.motif }}</h2>
+      
+      <!-- Display the owner's name -->
+      <p class="text-gray-600"><strong>Propriétaire : </strong>{{ owner.username }}</p>
+
+      <!-- Add a button to navigate to the owner's profile -->
+      <div class="mt-4">
+        <a href="{% url 'user_profile' owner.id %}" class="inline-block px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300">
+          Voir le profil du propriétaire
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+        <div>
+          <img src="{{ vehicule.image_profile.url }}" alt="Image principale" class="w-full h-80 object-cover rounded-lg mb-4">
+        </div>
+        <div>
+          <p class="text-gray-600"><strong>Description : </strong>{{ vehicule.description }}</p>
+          <p class="text-gray-600"><strong>Motif : </strong>{{ vehicule.motif }}</p>
+          <p class="text-gray-600"><strong>Commune : </strong>{{ vehicule.commune }}</p>
+          <p class="text-gray-600"><strong>Contacté : </strong>{% if vehicule.contacté %}Oui{% else %}Non{% endif %}</p>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <a href="{% url 'contact_vehicule' vehicule.id %}" class="inline-block px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300">
+            Contacter nous pour l'avoir
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-4xl font-semibold text-center mb-6">Galerie d'images du véhicule</h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 p-4">
+    {% if vehicule.photos.count == 0 %}
+        <p class="col-span-4 text-center text-gray-500">Aucune photo dans la galerie</p>
+    {% else %}
+        {% for photo in vehicule.photos.all %}
+            <div class="photo">
+                {% if photo.image %}
+                    <img src="{{ photo.image.url }}" alt="Image de la galerie" class="rounded-lg cursor-pointer" onclick="openGallery('{{ photo.image.url }}')">
+                {% else %}
+                    <p>Image indisponible</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+  </div>
+
+  <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+    <span class="absolute top-4 right-4 text-white text-3xl cursor-pointer" onclick="closeGallery()">×</span>
+    <img id="modalImage" class="max-w-full max-h-screen p-4">
+    <button class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white px-4 py-2 bg-blue-500 rounded" onclick="nextImage()"> > </button>
+    <button class="absolute bottom-4 left-1/4 transform -translate-x-1/4 text-white px-4 py-2 bg-blue-500 rounded" onclick="previousImage()"> < </button>
+  </div>
+
+  <script>
+    let images = [];
+    let currentIndex = 0;
+
+    function openGallery(imageUrl) {
+        images = [{% for photo in vehicule.photos.all %}'{{ photo.image.url }}',{% endfor %}];
+        currentIndex = images.indexOf(imageUrl);
+        document.getElementById('modalImage').src = imageUrl;
+        document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeGallery() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        document.getElementById('modalImage').src = images[currentIndex];
+    }
+
+    function previousImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        document.getElementById('modalImage').src = images[currentIndex];
+    }
+  </script>
+
+{% endblock %}

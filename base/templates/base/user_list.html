@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Formulaire de recherche pour filtrer les utilisateurs -->
+<section id="search" class="container mx-auto mt-8 px-4">
+    <form method="GET" action="#user-section" class="flex justify-center">
+        <!-- Champ de recherche par nom d'utilisateur -->
+        <div class="flex flex-col">
+            <label for="username" class="text-lg font-semibold text-gray-700">Nom d'utilisateur</label>
+            <input type="text" name="username" value="{{ username }}" placeholder="Rechercher par nom d'utilisateur" class="px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <!-- Bouton de recherche -->
+        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ml-4">
+            Rechercher
+        </button>
+    </form>
+</section>
+
+<!-- Liste des utilisateurs -->
+<!-- Liste des utilisateurs -->
+<section id="user-section" class="container mx-auto mt-8">
+    <h2 class="text-3xl font-bold text-center mb-6">Liste des vendeurs vehicules, categorie particulier </h2>
+    <div class="flex flex-wrap gap-6 justify-center">
+        {% for user in users %}
+        <div class="flex-shrink-0 border-2 border-secondary bg-slate-100 text-black rounded-xl mb-6 w-64">
+            <div class="p-4">
+                <!-- Afficher la photo de profil de l'utilisateur -->
+                <a href="{% if user.id == request.user.id %}{% url 'profile' %}{% else %}{% url 'user_profile' user.id %}{% endif %}">
+                    <!-- Afficher la photo de profil de l'utilisateur -->
+                    {% if user.profile_pic %}
+                        <img src="{{ user.profile_pic.url }}" alt="{{ user.username }}" class="rounded-full w-32 h-32 object-cover mx-auto mb-4" />
+                    {% else %}
+                        <img class="h-32 w-32 rounded-full" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Default Profile Picture">
+                    {% endif %}
+                </a>
+                <!-- Nom de l'utilisateur et détails -->
+                <h1 class="font-semibold text-xl text-primary text-center">
+                    <a href="{% if user.id == request.user.id %}{% url 'profile' %}{% else %}{% url 'user_profile' user.id %}{% endif %}" class="user-name">{{ user.username }}</a>  <!-- Lien vers le profil de l'autre utilisateur -->
+                </h1>
+                <p class="text-center text-gray-600">{{ user.first_name }} {{ user.last_name }}</p>
+                {% comment %} <p class="text-center text-gray-600">{{ user.phone }}</p> {% endcomment %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-500">Aucun utilisateur trouvé.</p>
+        {% endfor %}
+    </div>
+
+
+    <!-- Pagination -->
+    {% if users.has_other_pages %}
+    <div class="mt-8">
+        <nav aria-label="Pagination" class="flex justify-center">
+            <ul class="flex space-x-4">
+                {% if users.has_previous %}
+                <li>
+                    <a href="?page=1&username={{ username }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">&laquo; Première</a>
+                </li>
+                <li>
+                    <a href="?page={{ users.previous_page_number }}&username={{ username }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Précédente</a>
+                </li>
+                {% endif %}
+                {% for page in users.paginator.page_range %}
+                <li>
+                    {% if page == users.number %}
+                    <a href="?page={{ page }}&username={{ username }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg">{{ page }}</a>
+                    {% else %}
+                    <a href="?page={{ page }}&username={{ username }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-blue-600 hover:text-white">{{ page }}</a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+
+                {% if users.has_next %}
+                <li>
+                    <a href="?page={{ users.next_page_number }}&username={{ username }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Suivante</a>
+                </li>
+                <li>
+                    <a href="?page={{ users.paginator.num_pages }}&username={{ username }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Dernière &raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

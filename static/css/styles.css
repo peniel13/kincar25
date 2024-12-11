@@ -1,0 +1,40 @@
+/* styles.css */
+
+/* Définition de la couleur principale et secondaire du thème */
+:root {
+    --primary-color: #3490dc; /* Couleur bleue principale */
+    --secondary-color: #1a202c; /* Couleur de fond secondaire */
+    --hover-color: #2b6cb0; /* Couleur au survol */
+  }
+  
+  /* Personnalisation de Tailwind */
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  
+  @layer base {
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--secondary-color);
+      color: #fff;
+    }
+  
+    h1, h2, h3 {
+      color: var(--primary-color);
+    }
+  }
+  
+  /* Personnalisation des boutons */
+  .btn-primary {
+    @apply bg-blue-500 text-white py-2 px-4 rounded-md transition duration-200 ease-linear;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--hover-color);
+  }
+  
+  /* Section Footer */
+  footer {
+    background-color: var(--secondary-color);
+  }
+  

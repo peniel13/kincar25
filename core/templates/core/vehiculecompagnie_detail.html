@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto mt-8">
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="bg-green-100 text-green-700 p-4 rounded-lg mb-2">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-semibold mb-6">{{ vehicule_compagnie.nom }} - {{ vehicule_compagnie.prix }} {{ vehicule_compagnie.devise }} / {{ vehicule_compagnie.motif }}</h2>
+      <!-- Display the owner's name -->
+      <p class="text-gray-600"><strong>Compagnie Propriétaire : </strong>{{ compagnie_vehicule.nom }}</p>
+
+      <!-- Add a button to navigate to the owner's profile -->
+      <div class="mt-4">
+        <a href="{% url 'compagnie_detail' compagnie_vehicule.slug %}" class="inline-block px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300">
+          Voir le profil de la compagnie
+        </a>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <img src="{{ vehicule_compagnie.image_profile.url }}" alt="Image principale" class="w-full h-80 object-cover rounded-lg mb-4">
+        </div>
+        <div>
+          <p class="text-gray-600"><strong>Description : </strong>{{ vehicule_compagnie.description }}</p>
+          <p class="text-gray-600"><strong>Motif : </strong>{{ vehicule_compagnie.motif }}</p>
+          <p class="text-gray-600"><strong>Contacté : </strong>{% if vehicule_compagnie.contacté %}Oui{% else %}Non{% endif %}</p>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <a href="{% url 'contact_vehiculecompagnie' vehicule_compagnie.id %}" class="inline-block px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300">
+            Contacter nous pour l'avoir
+        </a>
+      </div>
+
+      <!-- Afficher le nom de la compagnie et ajouter un bouton pour accéder à la page de la compagnie -->
+      
+    </div>
+  </div>
+
+  <h2 class="text-4xl font-semibold text-center mb-6">Galerie d'images du véhicule</h2>
+
+  <!-- Conteneur de la galerie avec padding -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 p-4">
+    {% if vehicule_compagnie.photos.count == 0 %}
+        <p class="col-span-4 text-center text-gray-500">Aucune photo dans la galerie</p>
+    {% else %}
+        {% for photo in vehicule_compagnie.photos.all %}
+            <div class="photo">
+                <!-- Vérifie si l'image existe avant de l'afficher -->
+                {% if photo.image %}
+                    <img src="{{ photo.image.url }}" alt="Image de la galerie" class="rounded-lg cursor-pointer" onclick="openGallery('{{ photo.image.url }}')">
+                {% else %}
+                    <p>Image indisponible</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Modal pour afficher l'image en grand -->
+  <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+      <span class="absolute top-4 right-4 text-white text-3xl cursor-pointer" onclick="closeGallery()">×</span>
+      <img id="modalImage" class="max-w-full max-h-screen p-4">
+      <button class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white px-4 py-2 bg-blue-500 rounded" onclick="nextImage()"> > </button>
+      <button class="absolute bottom-4 left-1/4 transform -translate-x-1/4 text-white px-4 py-2 bg-blue-500 rounded" onclick="previousImage()"> < </button>
+  </div>
+
+  <script>
+    // JavaScript pour la lecture des images en galerie
+    let images = [];
+    let currentIndex = 0;
+
+    // Fonction pour ouvrir la galerie et afficher une image en grand
+    function openGallery(imageUrl) {
+        // Crée un tableau des URL des images
+        images = [{% for photo in vehicule_compagnie.photos.all %}'{{ photo.image.url }}',{% endfor %}];
+
+        // Récupère l'index de l'image cliquée
+        currentIndex = images.indexOf(imageUrl);
+
+        // Met l'URL de l'image dans le modal
+        document.getElementById('modalImage').src = imageUrl;
+
+        // Affiche le modal
+        document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    // Fonction pour fermer la galerie
+    function closeGallery() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    // Fonction pour afficher l'image suivante dans la galerie
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        document.getElementById('modalImage').src = images[currentIndex];
+    }
+
+    // Fonction pour afficher l'image précédente dans la galerie
+    function previousImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        document.getElementById('modalImage').src = images[currentIndex];
+    }
+  </script>
+  
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto mt-8">
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="bg-green-100 text-green-700 p-4 rounded-lg mb-2">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-semibold mb-6">{{ vehicule_compagnie.nom }} - {{ vehicule_compagnie.prix }} {{ vehicule_compagnie.devise }} / {{ vehicule_compagnie.motif }}</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <img src="{{ vehicule_compagnie.image_profile.url }}" alt="Image principale" class="w-full h-80 object-cover rounded-lg mb-4">
+        </div>
+        <div>
+          <p class="text-gray-600"><strong>Description : </strong>{{ vehicule_compagnie.description }}</p>
+          <p class="text-gray-600"><strong>Motif : </strong>{{ vehicule_compagnie.motif }}</p>
+          <p class="text-gray-600"><strong>Contacté : </strong>{% if vehicule_compagnie.contacté %}Oui{% else %}Non{% endif %}</p>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <a href="{% url 'contact_vehiculecompagnie' vehicule_compagnie.id %}" class="inline-block px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300">
+            Contacter nous pour l'avoir
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-4xl font-semibold text-center mb-6">Galerie d'images du véhicule</h2>
+
+  <!-- Conteneur de la galerie avec padding -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 p-4">
+    {% if vehicule_compagnie.photos.count == 0 %}
+        <p class="col-span-4 text-center text-gray-500">Aucune photo dans la galerie</p>
+    {% else %}
+        {% for photo in vehicule_compagnie.photos.all %}
+            <div class="photo">
+                <!-- Vérifie si l'image existe avant de l'afficher -->
+                {% if photo.image %}
+                    <img src="{{ photo.image.url }}" alt="Image de la galerie" class="rounded-lg cursor-pointer" onclick="openGallery('{{ photo.image.url }}')">
+                {% else %}
+                    <p>Image indisponible</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Modal pour afficher l'image en grand -->
+  <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+      <span class="absolute top-4 right-4 text-white text-3xl cursor-pointer" onclick="closeGallery()">×</span>
+      <img id="modalImage" class="max-w-full max-h-screen p-4">
+      <button class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white px-4 py-2 bg-blue-500 rounded" onclick="nextImage()">Suivant</button>
+      <button class="absolute bottom-4 left-1/4 transform -translate-x-1/4 text-white px-4 py-2 bg-blue-500 rounded" onclick="previousImage()">Précédent</button>
+  </div>
+
+  <script>
+    // JavaScript pour la lecture des images en galerie
+    let images = [];
+    let currentIndex = 0;
+
+    // Fonction pour ouvrir la galerie et afficher une image en grand
+    function openGallery(imageUrl) {
+        // Crée un tableau des URL des images
+        images = [{% for photo in vehicule_compagnie.photos.all %}'{{ photo.image.url }}',{% endfor %}];
+
+        // Récupère l'index de l'image cliquée
+        currentIndex = images.indexOf(imageUrl);
+
+        // Met l'URL de l'image dans le modal
+        document.getElementById('modalImage').src = imageUrl;
+
+        // Affiche le modal
+        document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    // Fonction pour fermer la galerie
+    function closeGallery() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    // Fonction pour afficher l'image suivante dans la galerie
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        document.getElementById('modalImage').src = images[currentIndex];
+    }
+
+    // Fonction pour afficher l'image précédente dans la galerie
+    function previousImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        document.getElementById('modalImage').src = images[currentIndex];
+    }
+  </script>
+  
+{% endblock %} {% endcomment %}

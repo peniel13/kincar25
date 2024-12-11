@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if messages %}
+<div class="mb-4">
+  {% for message in messages %}
+    <div class="bg-green-100 text-green-700 p-4 rounded-lg mb-2">
+      {{ message }}
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+<section class="relative bg-cover bg-center h-96" style="background-image: url('{% static 'img/hero.jpg' %}');">
+    <div class="absolute inset-0 bg-gray-800 opacity-50"></div>
+    <div class="container mx-auto h-full flex items-center justify-start relative z-10">
+        <div class="text-left text-white">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    {% if user.profile_pic %}
+                        <img class="h-32 w-32 rounded-full" src="{{ user.profile_pic.url }}" alt="Profile Picture">
+                    {% else %}
+                        <img class="h-32 w-32 rounded-full" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Default Profile Picture">
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
+                    <p class="text-xl">{{ user.role }}</p>
+                    {% comment %} <p class="text-lg">{{ user.email }}</p> {% endcomment %}
+                    <p class="text-lg">{{ user.bio }}</p>
+                    {% comment %} <p class="text-lg">Téléphone : {{ user.phone }}</p> {% endcomment %}
+                    <p class="text-lg">Adresse : {{ user.address }}</p>
+                </div>
+            </div>
+            <hr class="border-2 border-white my-4">
+            <p class="text-lg">Gérez vos informations personnelles et vos préférences ici.</p>
+            {% if user == request.user %}
+            <div class="mt-4">
+                <a href="{% url 'update_profile' %}" class="px-6 py-2 bg-blue-500 text-white rounded-full text-lg hover:bg-blue-600 transition duration-300">
+                    Modifier Profil
+                </a>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'add_vehicule' %}" class="px-6 py-2 bg-blue-500 text-white rounded-full text-lg hover:bg-blue-600 transition duration-300">
+                    Ajouter un véhicule
+                </a>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'create_compagnie_vehicule' %}" class="px-6 py-2 bg-blue-500 text-white rounded-full text-lg hover:bg-blue-600 transition duration-300">
+                    Ajouter une compagnie
+                </a>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Boutons de sélection : Particulier ou Compagnie -->
+<section class="container mx-auto mt-8 text-center">
+    <div class="flex justify-center gap-4">
+        <a href="?type=vehicule" class="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg hover:bg-blue-600 transition duration-300">
+            Particulier
+        </a>
+        <a href="?type=compagnie" class="px-6 py-2 bg-green-500 text-white rounded-lg text-lg hover:bg-green-600 transition duration-300">
+            Compagnie
+        </a>
+    </div>
+</section>
+
+<!-- Formulaire de recherche (barre de recherche) visible uniquement pour Particulier -->
+{% if type == "vehicule" %}
+<!-- Formulaire de recherche desktop -->
+<section id="search" class="container mx-auto mt-8 px-4 hidden sm:block">
+   <form method="GET" action="#vehicules-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+       <!-- Champ de recherche par nom -->
+       <div class="flex flex-col">
+           <label for="nom" class="text-lg font-semibold text-gray-700">Nom du véhicule</label>
+           <input type="text" name="nom" value="{{ nom }}" placeholder="Rechercher par nom" class="px-4 py-2 border border-gray-300 rounded-lg">
+       </div>
+       
+       <!-- Filtre par type de bien -->
+       <div class="flex flex-col">
+           <label for="type_bien" class="text-lg font-semibold text-gray-700">Type de véhicule</label>
+           <select name="type_bien" class="px-4 py-2 border border-gray-300 rounded-lg">
+               <option value="">Tous</option>
+               <option value="voiture" {% if type_bien == 'voiture' %}selected{% endif %}>Voiture</option>
+               <option value="moto" {% if type_bien == 'moto' %}selected{% endif %}>Moto</option>
+               <option value="camion" {% if type_bien == 'camion' %}selected{% endif %}>Camion</option>
+               <option value="bus" {% if type_bien == 'bus' %}selected{% endif %}>Bus</option>
+               <option value="utilitaire" {% if type_bien == 'utilitaire' %}selected{% endif %}>Véhicule utilitaire</option>
+               <option value="autres" {% if type_bien == 'autres' %}selected{% endif %}>Autres</option>
+           </select>
+       </div>
+
+       <!-- Filtre par prix -->
+       <div class="flex flex-col">
+           <label for="prix_min" class="text-lg font-semibold text-gray-700">Prix min</label>
+           <input type="number" name="prix_min" value="{{ prix_min }}" placeholder="Prix minimum" class="px-4 py-2 border border-gray-300 rounded-lg">
+       </div>
+       <div class="flex flex-col">
+           <label for="prix_max" class="text-lg font-semibold text-gray-700">Prix max</label>
+           <input type="number" name="prix_max" value="{{ prix_max }}" placeholder="Prix maximum" class="px-4 py-2 border border-gray-300 rounded-lg">
+       </div>
+
+       <!-- Bouton de recherche (aligné en bas sur grand écran) -->
+       <div class="flex justify-center items-end sm:col-span-2 lg:col-span-4 mt-6">
+           <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+               Rechercher
+           </button>
+       </div>
+   </form>
+</section>
+
+{% endif %}
+<!-- Barre de recherche mobile -->
+<!-- Sur petits écrans, on utilise un bouton pour afficher un "slide" avec les filtres -->
+{% if type == "vehicule" %}
+<section id="search-slide" class="sm:hidden fixed top-0 left-0 w-full bg-gray-900 bg-opacity-75 z-50 hidden">
+    <div class="flex justify-between items-center p-4">
+        <h2 class="text-white font-semibold">Filtres de recherche</h2>
+        <button id="close-slide" class="text-white">X</button>
+    </div>
+    <form method="GET" action="#vehicules-section" class="p-4 bg-white">
+        <div class="flex flex-col mb-4">
+            <label for="nom" class="text-lg font-semibold">Nom du véhicule</label>
+            <input type="text" name="nom" value="{{ nom }}" placeholder="Rechercher par nom" class="px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        
+        <div class="flex flex-col mb-4">
+            <label for="type_bien" class="text-lg font-semibold">Type de véhicule</label>
+            <select name="type_bien" class="px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="">Tous</option>
+                <option value="voiture" {% if type_bien == 'voiture' %}selected{% endif %}>Voiture</option>
+                <option value="moto" {% if type_bien == 'moto' %}selected{% endif %}>Moto</option>
+                <option value="camion" {% if type_bien == 'camion' %}selected{% endif %}>Camion</option>
+                <option value="bus" {% if type_bien == 'bus' %}selected{% endif %}>Bus</option>
+                <option value="utilitaire" {% if type_bien == 'utilitaire' %}selected{% endif %}>Véhicule utilitaire</option>
+                <option value="autres" {% if type_bien == 'autres' %}selected{% endif %}>Autres</option>
+            </select>
+        </div>
+
+        <div class="flex flex-col mb-4">
+            <label for="prix_min" class="text-lg font-semibold">Prix min</label>
+            <input type="number" name="prix_min" value="{{ prix_min }}" placeholder="Prix minimum" class="px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+
+        <div class="flex flex-col mb-4">
+            <label for="prix_max" class="text-lg font-semibold">Prix max</label>
+            <input type="number" name="prix_max" value="{{ prix_max }}" placeholder="Prix maximum" class="px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+
+        <!-- Bouton de recherche pour mobile -->
+        <div class="flex justify-center items-end">
+            <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                Rechercher
+            </button>
+        </div>
+    </form>
+</section>
+<!-- Bouton pour afficher la recherche mobile -->
+<div class="sm:hidden text-center mt-4">
+    <button id="open-slide" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+        Ouvrir les filtres
+    </button>
+</div>
+{% endif %}
+<!-- Affichage des données en fonction de la sélection -->
+<section id="vehicules-section" class="container mx-auto mt-8">
+    {% if type == "vehicule" %}
+        <h2 class="text-3xl font-bold text-center mb-6"> véhicules ajoutés</h2>
+        <div class="flex flex-wrap gap-6 justify-center">
+            {% comment %} {% for vehicule in vehicules %}
+                <div class="flex-shrink-0 border-2 border-secondary bg-slate-100 text-black rounded-xl mb-6 cursor-pointer hover:scale-95 hover:bg-slate-200 transition duration-200 ease-linear w-64">
+                    <div>
+                        <img src="{{ vehicule.image_profile.url }}" alt="{{ vehicule.nom }}" class="rounded-t-xl w-full h-40 object-cover" />
+                    </div>
+                    <div class="flex flex-col justify-center items-center p-4">
+                        <h1 class="font-semibold text-xl text-primary pt-2">{{ vehicule.nom }}</h1>
+                        <div class="flex gap-10 pt-2">
+                            <h2 class="font-medium text-lg">{{ vehicule.devise }} {{ vehicule.prix }}</h2>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'vehicule_detail' vehicule.id %}" class="px-6 py-2 bg-blue-500 text-white rounded-full text-lg hover:bg-blue-600 transition duration-300">
+                                Voir les détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500">Aucun véhicule ajouté pour le moment.</p>
+            {% endfor %} {% endcomment %}
+            {% for vehicule in vehicules %}
+            <div class="flex-shrink-0 border-2 border-secondary bg-slate-100 text-black rounded-xl mb-6 cursor-pointer hover:scale-95 hover:bg-slate-200 transition duration-200 ease-linear w-64">
+                <div>
+                    <img src="{{ vehicule.image_profile.url }}" alt="{{ vehicule.nom }}" class="rounded-t-xl w-full h-40 object-cover" />
+                </div>
+                <div class="flex flex-col justify-center items-center p-4">
+                    <h1 class="font-semibold text-xl text-primary pt-2">{{ vehicule.nom }}</h1>
+                    <div class="flex gap-10 pt-2">
+                        <h2 class="font-medium text-lg">{{ vehicule.prix }} {{ vehicule.devise }}/{{ vehicule.motif }}</h2>
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'vehicule_detail' vehicule.id %}" class="px-6 py-2 bg-blue-500 text-white rounded-full text-lg hover:bg-blue-600 transition duration-300">
+                            Voir les détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center text-gray-500">Aucun véhicule ajouté pour le moment ou Rechercher.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if vehicules.has_other_pages %}
+    <div class="mt-8">
+        <nav aria-label="Pagination" class="flex justify-center">
+            <ul class="flex space-x-4">
+                {% if vehicules.has_previous %}
+                <li>
+                    <a href="?page=1" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">&laquo; Première</a>
+                </li>
+                <li>
+                    <a href="?page={{ vehicules.previous_page_number }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Précédente</a>
+                </li>
+                {% endif %}
+                {% for page in vehicules.paginator.page_range %}
+                <li>
+                    {% if page == vehicules.number %}
+                    <a href="?page={{ page }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">{{ page }}</a>
+                    {% else %}
+                    <a href="?page={{ page }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">{{ page }}</a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+
+                {% if vehicules.has_next %}
+                <li>
+                    <a href="?page={{ vehicules.next_page_number }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Suivante</a>
+                </li>
+                <li>
+                    <a href="?page={{ vehicules.paginator.num_pages }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Dernière &raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+        </div>
+        
+    {% elif type == "compagnie" %}
+        <h2 class="text-3xl font-bold text-center mb-6">compagnies de véhicules ajoutées</h2>
+        <div class="flex flex-wrap gap-6 justify-center">
+            {% for compagnie in compagnies %}
+                <div class="flex-shrink-0 border-2 border-secondary bg-slate-100 text-black rounded-xl mb-6 cursor-pointer hover:scale-95 hover:bg-slate-200 transition duration-200 ease-linear w-64">
+                    <div>
+                        <img src="{{ compagnie.thumbnail.url }}" alt="{{ compagnie.nom }}" class="rounded-t-xl w-full h-40 object-cover" />
+                    </div>
+                    <div class="flex flex-col justify-center items-center p-4">
+                        <h1 class="font-semibold text-xl text-primary pt-2">{{ compagnie.nom }}</h1>
+                        <div class="flex gap-10 pt-2">
+                            <h2 class="font-medium text-lg">{{ compagnie.pays }}</h2>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'compagnie_detail' compagnie_slug=compagnie.slug %}" class="px-6 py-2 bg-blue-500 text-white rounded-full text-lg hover:bg-blue-600 transition duration-300">
+                                Voir les détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+            
+                <p class="text-center text-gray-500">Aucune compagnie ajoutée pour le moment.</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-500">Veuillez sélectionner une option (Particulier ou Compagnie).</p>
+    {% endif %}
+</section>
+
+<!-- Script pour ouvrir et fermer le slide mobile -->
+<script>
+    document.getElementById('open-slide').addEventListener('click', function() {
+        document.getElementById('search-slide').classList.remove('hidden');
+    });
+
+    document.getElementById('close-slide').addEventListener('click', function() {
+        document.getElementById('search-slide').classList.add('hidden');
+    });
+</script>
+{% endblock %}
